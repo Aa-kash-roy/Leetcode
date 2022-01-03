@@ -3,7 +3,10 @@ using namespace std;
 
 /*
     125. Number of Palindromic Substrings
+    162. Long Distance (Binary index Tree inversion count)
+    239. Fair pay
     725. Least Recently Used Cache
+    741. Search Engine* (Trie implementation)
 */
 // ++++++++++++++++++++++++++++++++++++++++++++
 
@@ -156,6 +159,116 @@ int solve(vector<int>& ratings) {
         ans += x;
 
     return ans;
+}
+
+/*
+    Important**
+    We can't have index greator than 10^6, so we can use compression to solve our purpose.
+    vector<int> arr containing the elements range between 1 < arr[i] < 10^9
+
+    1. put elements into set.
+    2. create a map and map the elements of set for unique elements 
+
+    int var = 1;
+    for(auto x: st) mp[x] = var++;
+
+*/
+
+/*
+
+Long Distance
+Given a list of integers nums, return a new list where each element in the new list is the number
+of smaller elements to the right of that element in the original input list.
+
+Constraints
+n ≤ 100,000 where n is the length of nums
+Example 1
+Input
+lst = [3, 4, 9, 6, 1]
+Output
+[1, 1, 2, 1, 0]
+Explanation
+There is 1 smaller element to the right of 3
+There is 1 smaller element to the right of 4
+There are 2 smaller elements to the right of 9
+There is 1 smaller element to the right of 6
+There are no smaller elements to the right of 1
+
+*/
+
+int getAns(vector<int> &tree, int num){
+
+    int i = num;
+    int ans = 0;
+    for(;i>0;i -= (i&(-i)))
+        ans += tree[i];
+    return ans;
+}
+
+void update(vector<int> &tree, int num, int val){
+
+    int i = num;
+    for(;i < val; i += (i&(-i)))
+        tree[i]++;
+    return;
+}
+
+vector<int> solve(vector<int>& lst) {
+    
+    int n = lst.size();
+    set<int> st;
+    map<int, int> mp;
+    for(auto x: lst) st.insert(x);
+    int var = 1;
+    for(auto x: st)
+        mp[x] = var++;
+
+    vector<int> tree(var, 0);
+    vector<int> ans(n, 0);
+
+    for(int i=n-1; i>=0; i--){
+        ans[i] = getAns(tree, mp[lst[i]] - 1);
+        update(tree, mp[lst[i]], var);
+    }
+
+    return ans;
+}
+
+/*
+
+Sort by Frequency and Value
+
+Given a list of integers nums, order nums by frequency, with most frequent values coming first. 
+If there's a tie in frequency, higher valued numbers should come first.
+
+Constraints
+0 ≤ n ≤ 100,000 where n is the length of nums
+
+Example 1
+Input
+nums = [1, 1, 5, 5, 5, 2, 2, 2, 1, 1]
+Output
+[1, 1, 1, 1, 5, 5, 5, 2, 2, 2]
+Explanation
+Since 1 occurs most frequently (4 times) they come first. 5 and 2 are then tied 
+in terms of frequency (both 3 times) but 5 has higher value so it comes second.
+
+*/
+
+vector<int> solve(vector<int>& nums) {
+    
+    unordered_map<int, int> mp;
+    for(auto x: nums) mp[x]++;
+
+    auto comp = [&](int a, int b){
+
+        if(mp[a] == mp[b])
+            return a > b;
+        return mp[a] > mp[b];
+    };
+
+    sort(nums.begin(), nums.end(), comp);
+    return nums;
 }
 
 // ++++++++++++++++++++++++++++++++++++++++++++
