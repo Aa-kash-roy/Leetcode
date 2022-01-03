@@ -61,6 +61,53 @@ int solve(string s) {
     return ans;
 }
 
+/*
+
+Least Recently Used Cache
+
+Implement a least recently used cache with the following methods:
+LRUCache(int capacity) constructs a new instance of a LRU cache with the given capacity.
+get(int key) retrieves the value associated with the key key. If it does not exist, return -1. As a side effect, this key now becomes the most recently used key.
+set(int key, int val) updates the key key with value val. If updating this key-value pair exceeds capacity, then evicts the least recently used key-value pair.
+Each method should be done in O(1) time.
+
+Constraints
+n ≤ 100,000 where n is the number of calls to get and set.
+
+*/
+
+class LRUCache {
+    public:
+    int cap, time = 0;
+    map<int, int> mp, mpt;
+    std:: set<pair<int, int>> st;
+    LRUCache(int _cap) {
+        cap = _cap;
+    }
+
+    int get(int key) {
+        if(!mp.count(key))
+            return -1;
+        return mp[key];
+    }
+
+    void set(int key, int val) {
+        if(mp.size() == cap and !mp.count(key)){
+            auto [a, b] = *st.begin();
+            mp.erase(b);
+            mpt.erase(b);
+
+            st.erase(st.begin());
+        }
+
+        if(st.count({mpt[key], key}))
+            st.erase({mpt[key], key});
+        time++;
+        mpt[key] = time;
+        mp[key] = val;
+        st.insert({time, key});
+    }
+};
 
 // ++++++++++++++++++++++++++++++++++++++++++++
 
