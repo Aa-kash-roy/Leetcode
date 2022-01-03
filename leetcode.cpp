@@ -3,6 +3,7 @@ using namespace std;
 
 /*
     125. Number of Palindromic Substrings
+    725. Least Recently Used Cache
 */
 // ++++++++++++++++++++++++++++++++++++++++++++
 
@@ -108,6 +109,54 @@ class LRUCache {
         st.insert({time, key});
     }
 };
+
+/*
+
+Fair Pay
+You are given a list of integers ratings representing the performance scores of programmers.
+The manager would like to give $1 to every programmer except if two programmers are adjacent, 
+they'd like to pay the better performing programmer at least $1 higher than the worse performing one.
+
+Return the minimum amount of dollars the manager can pay following above constraints.
+
+Constraints
+
+n ≤ 100,000 where n is the length of ratings.
+Example 1
+Input
+ratings = [1, 2, 5, 1]
+Output
+7
+Explanation
+The minimum we can pay for each respective programmer is [1, 2, 3, 1]
+
+*/
+
+int solve(vector<int>& ratings) {
+    
+    int n = ratings.size();
+
+    vector<int> left(n, 1), right(n, 1);
+    for(int i=1;i<n;i++){
+        if(ratings[i] > ratings[i-1])
+            left[i] = left[i-1] + 1;
+    }
+
+    for(int i=n-2;i>=0;i--){
+        if(ratings[i] > ratings[i+1])
+            right[i] = right[i+1] + 1;
+    }
+
+    for(int i=0;i<n;i++){
+        left[i] = max(left[i], right[i]);
+    }
+
+    int ans = 0;
+    for(auto x: left)
+        ans += x;
+
+    return ans;
+}
 
 // ++++++++++++++++++++++++++++++++++++++++++++
 
