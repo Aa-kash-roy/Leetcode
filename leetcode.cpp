@@ -2,6 +2,8 @@
 using namespace std;
 
 /*
+     88. Sort by Frequency and Value
+    115. Longest Palindromic Substring 
     125. Number of Palindromic Substrings
     162. Long Distance (Binary index Tree inversion count)
     239. Fair pay
@@ -269,6 +271,51 @@ vector<int> solve(vector<int>& nums) {
 
     sort(nums.begin(), nums.end(), comp);
     return nums;
+}
+
+/*
+Longest Palindromic Substring
+
+Given a string s, return the length of the longest palindromic substring.
+Constraints
+n ≤ 1,000 where n is the length of s
+
+Example 1
+Input
+s = "mactacocatbook"
+Output
+7
+
+*/
+
+int solve(string s) {
+    
+    int n = s.length();
+
+    int dp[n][n];
+    memset(dp, 0, sizeof(dp));
+
+    for(int g=0;g<n;g++){
+        for(int i=0, j=g;i<n;i++, j++){
+            if(g == 0)
+                dp[i][j] = 1;
+            else if(g == 1)
+                dp[i][j] = s[i]==s[j] ? 2 : 0;
+            else{
+
+                if(s[i] == s[j] and dp[i+1][j-1])
+                    dp[i][j] = 2 + dp[i+1][j-1];
+            }
+        }
+    }
+
+    int ans = 0;
+    for(int i=0;i<n;i++){
+        for(int j=i;j<n;j++)
+            ans = max(ans, dp[i][j]);
+    }
+
+    return ans;
 }
 
 // ++++++++++++++++++++++++++++++++++++++++++++
