@@ -6,9 +6,11 @@ using namespace std;
     115. Longest Palindromic Substring 
     125. Number of Palindromic Substrings
     162. Long Distance (Binary index Tree inversion count)
+    199. Level Order Alternating
     239. Fair pay
     725. Least Recently Used Cache
     741. Search Engine* (Trie implementation)
+    1094. Car Pooling (leetcode)
 */
 // ++++++++++++++++++++++++++++++++++++++++++++
 
@@ -318,6 +320,90 @@ int solve(string s) {
     return ans;
 }
 
+/*
+
+Level Order Alternating
+
+Given a binary tree root, return values of the nodes in each level, alternating from going 
+left-to-right and right-to-left.
+
+Constraints
+
+n ≤ 100,000 where n is the number of nodes in root
+*/
+
+/**
+ * class Tree {
+ *     public:
+ *         int val;
+ *         Tree *left;
+ *         Tree *right;
+ * };
+ */
+vector<int> solve(Tree* root) {
+    
+    vector<int> ans;
+    queue<Tree*> q;
+    bool ok = 0;
+
+    q.push(root);
+    while(q.size()){
+        int sz = q.size();
+        vector<int> t;
+        for(int i=0;i<sz;i++){
+            Tree *node = q.front();
+            q.pop();
+            t.push_back(node->val);
+            if(node->left)
+                q.push(node->left);
+            if(node->right)
+                q.push(node->right);
+        }
+        if(ok)
+            reverse(t.begin(), t.end());
+        for(auto x: t)
+            ans.push_back(x);
+        ok = !ok;
+    }
+
+    return ans;
+}
+
+/*
+1094. Car Pooling
+
+There is a car with capacity empty seats. The vehicle only drives east (i.e., it cannot turn around and drive west).
+You are given the integer capacity and an array trips where trip[i] = [numPassengersi, fromi, toi] 
+indicates that the ith trip has numPassengersi passengers and the locations to pick them up and drop them off are fromi and toi respectively. 
+The locations are given as the number of kilometers due east from the car's initial location.
+
+Return true if it is possible to pick up and drop off all passengers for all the given trips, 
+or false otherwise.
+
+Example 1:
+
+Input: trips = [[2,1,5],[3,3,7]], capacity = 4
+Output: false
+
+*/
+
+class Solution {
+public:
+    bool carPooling(vector<vector<int>>& trips, int capacity) {
+        map<int, int> map;
+        for (int i = 0;i < trips.size();++i) {
+            map[trips[i][1]] += trips[i][0]; //filled seats increase when we pick up passengers
+            map[trips[i][2]] -= trips[i][0]; //filled seats decrease when we drop off the passengers
+        }
+        for (auto it = map.begin(); it != map.end();it++) { //map is sorted on keys( key is time instant)
+            capacity -= it->second;
+            if (capacity < 0) { //if at any time instant, vacant seats < no of passengers to pick up, return false
+                return false;
+            }
+        }
+        return true;
+    }
+};
 // ++++++++++++++++++++++++++++++++++++++++++++
 
 int main(){
