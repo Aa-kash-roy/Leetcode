@@ -8,9 +8,11 @@ using namespace std;
     162. Long Distance (Binary index Tree inversion count)
     199. Level Order Alternating
     239. Fair pay
+    460. LFU Cache (leetcode)
     725. Least Recently Used Cache
     741. Search Engine* (Trie implementation)
     1094. Car Pooling (leetcode)
+    2121. Intervals Between Identical Elements (leetcode)
 */
 // ++++++++++++++++++++++++++++++++++++++++++++
 
@@ -522,6 +524,63 @@ public:
  * int param_1 = obj->get(key);
  * obj->put(key,value);
  */
+
+/*
+
+2121. Intervals Between Identical Elements
+
+You are given a 0-indexed array of n integers arr.
+The interval between two elements in arr is defined as the absolute difference between their indices. 
+More formally, the interval between arr[i] and arr[j] is |i - j|.
+
+Return an array intervals of length n where intervals[i] is the sum of intervals between arr[i] 
+and each element in arr with the same value as arr[i].
+Note: |x| is the absolute value of x.
+
+Example 1:
+
+Input: arr = [2,1,3,1,2,3,3]
+Output: [4,2,7,2,4,4,5]
+Explanation:
+- Index 0: Another 2 is found at index 4. |0 - 4| = 4
+- Index 1: Another 1 is found at index 3. |1 - 3| = 2
+- Index 2: Two more 3s are found at indices 5 and 6. |2 - 5| + |2 - 6| = 7
+- Index 3: Another 1 is found at index 1. |3 - 1| = 2
+- Index 4: Another 2 is found at index 0. |4 - 0| = 4
+- Index 5: Two more 3s are found at indices 2 and 6. |5 - 2| + |5 - 6| = 4
+- Index 6: Two more 3s are found at indices 2 and 5. |6 - 2| + |6 - 5| = 5
+
+*/
+
+class Solution {
+public:
+    vector<long long> getDistances(vector<int>& arr) {
+        
+        int n = arr.size();
+        map<int, vector<int>> mp;
+        for(int i=0;i<n;i++){
+            mp[arr[i]].push_back(i);
+        }
+        
+        vector<long long> ans(n, 0);
+        for(auto x: mp){
+            auto vp = x.second;
+            int sz = vp.size();
+            vector<long long> suf(sz, 0), pre(sz, 0);
+            for(int i=1;i<sz;i++){
+                pre[i] = (vp[i] - vp[i-1])*i + pre[i-1]; 
+            }
+            for(int i=sz-2;i>=0;i--)
+                suf[i] = (vp[i+1] - vp[i])*(sz-i-1) + suf[i+1]; 
+            
+            for(int i=0;i<sz;i++){
+                ans[vp[i]] = pre[i] + suf[i];
+            }
+        }
+        
+        return ans;
+    }
+};
 
 // ++++++++++++++++++++++++++++++++++++++++++++
 
